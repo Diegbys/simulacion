@@ -54,7 +54,7 @@ export default function LineOneLimit() {
             let pn0 = (1 - ro)/(1 - ro ** (parseFloat(data.N) + 1))
             let pnAcum = 0;
 
-            for (let index = 0; index <= 5; index++) {
+            for (let index = 0; index <= parseFloat(data.N); index++) {
                 let pn = index === 0 ? pn0 : pn0 * ro ** index;
                 pnAcum += pn;
 
