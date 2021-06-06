@@ -1,0 +1,57 @@
+.body {
+  background: #333;
+  height: 100vh;
+  color: white !important;
+  overflow-y: auto;
+}
+
+.MuiButtonBase-root, .MuiList-root, .MuiSvgIcon-root, .MuiInputBase-input, th, td{
+  color: white !important;
+}
+
+.card, .MuiPaper-root, .MuiDrawer-paperAnchorLeft, .button{
+  background: #424242 !important;
+}
+
+a{
+  text-decoration: none !important;
+}
+
+.mainContainer{
+  padding: 0 20px;
+  height: calc(100% - 58px);
+}
+
+.input{
+  width: 100%;
+}
+
+.MuiTableContainer-root{
+  max-height: 350px;
+}
+
+.navbar{
+  padding: 0 10px;
+  padding-top: 10px;
+}
+
+.homeContainer{
+  margin-top: 50px;
+  padding: 0 10%;
+}
+
+.homeImage{
+  width: 100%;
+}
+
+.homeRigth{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.homeRigth h1{
+  font-size: 50px;
+}
