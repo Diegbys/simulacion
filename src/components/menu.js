@@ -64,13 +64,13 @@ export default function MenuAp() {
                 <Divider />
 
                 <ListItem>Varios servidores</ListItem>
-                <Link to="/line_various_limit">
+                <Link to="/line_various_nolimit">
                     <ListItem button >
                         <ListItemIcon><LinearScaleOutlinedIcon /></ListItemIcon>
                         <ListItemText primary="Sin límite en la cola" />
                     </ListItem>
                 </Link>
-                <Link to="/line_one_limit">
+                <Link to="/line_various_limit">
                     <ListItem button >
                         <ListItemIcon><MultilineChartOutlinedIcon /></ListItemIcon>
                         <ListItemText primary="Con límite en la cola" />
@@ -107,7 +107,6 @@ export default function MenuAp() {
                     open={sidebar}
                     onClose={toggleDrawer(false)}
                     onOpen={toggleDrawer(true)}
-                    backgroundColor='black'
                 >
                     {list()}
                 </SwipeableDrawer>

@@ -5,6 +5,7 @@ import MenuAp from './components/menu';
 import './styles/App.css';
 import LineOneNoLimit from "./screens/line_one_nolimit";
 import LineOneLimit from "./screens/line_one_limit";
+import LineVariousNoLimit from "./screens/line_various_nolimit";
 import LineVariousLimit from "./screens/line_various_limit";
 import Home from "./screens/home.js";
 
@@ -20,6 +21,9 @@ function App() {
             </Route>
             <Route path="/line_one_limit">
               <LineOneLimit />
+            </Route>
+            <Route path="/line_various_nolimit">
+              <LineVariousNoLimit />
             </Route>
             <Route path="/line_various_limit">
               <LineVariousLimit />
