@@ -46,6 +46,7 @@ export default function MenuAp() {
             className="sidebar"
         >
             <List>
+
                 <ListItem>Un servidor</ListItem>
                 <Link to="/line_one_nolimit">
                     <ListItem button >
@@ -59,8 +60,23 @@ export default function MenuAp() {
                         <ListItemText primary="Con límite en la cola" />
                     </ListItem>
                 </Link>
+
+                <Divider />
+
+                <ListItem>Varios servidores</ListItem>
+                <Link to="/line_various_limit">
+                    <ListItem button >
+                        <ListItemIcon><LinearScaleOutlinedIcon /></ListItemIcon>
+                        <ListItemText primary="Sin límite en la cola" />
+                    </ListItem>
+                </Link>
+                <Link to="/line_one_limit">
+                    <ListItem button >
+                        <ListItemIcon><MultilineChartOutlinedIcon /></ListItemIcon>
+                        <ListItemText primary="Con límite en la cola" />
+                    </ListItem>
+                </Link>
             </List>
-            <Divider />
         </div>
     );
 
