@@ -19,13 +19,7 @@ export default function LineVariousLimit() {
             alert("Debe llenar todos los campos");
             return;
         }
-
-        // let p = parseFloat(data.lampda) / parseFloat(data.mu);
-        // let p_c = p / parseFloat(data.c);
-        // let po = 1 / (calcSumatory(p) + (p ** parseFloat(data.c) / (fact(parseFloat(data.c)) * (1 - p_c))));
-        // let lq = p ** (parseFloat(data.c) + 1) / (fact(parseFloat(data.c) - 1) * (parseFloat(data.c) - p) ** 2) * po;
-        // let ls = lq + p;
-
+        
         let c = parseFloat(data.c);
         let n = parseFloat(data.n);
         let p = parseFloat(data.lampda) / parseFloat(data.mu);

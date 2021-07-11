@@ -76,6 +76,17 @@ export default function MenuAp() {
                         <ListItemText primary="Con límite en la cola" />
                     </ListItem>
                 </Link>
+
+                <Divider />
+
+                <ListItem>Simulación</ListItem>
+                <Link to ="/simulation">
+                    <ListItem button>
+                        <ListItemIcon><MultilineChartOutlinedIcon /></ListItemIcon>
+                        <ListItemText primary="Cajeros" />
+                    </ListItem>
+                </Link>
+                
             </List>
         </div>
     );

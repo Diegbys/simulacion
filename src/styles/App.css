@@ -5,46 +5,54 @@
   overflow-y: auto;
 }
 
-.MuiButtonBase-root, .MuiList-root, .MuiSvgIcon-root, .MuiInputBase-input, th, td{
+.MuiButtonBase-root,
+.MuiList-root,
+.MuiSvgIcon-root,
+.MuiInputBase-input,
+th,
+td {
   color: white !important;
 }
 
-.card, .MuiPaper-root, .MuiDrawer-paperAnchorLeft, .button{
+.card,
+.MuiPaper-root,
+.MuiDrawer-paperAnchorLeft,
+.button {
   background: #424242 !important;
 }
 
-a{
+a {
   text-decoration: none !important;
 }
 
-.mainContainer{
+.mainContainer {
   padding: 0 20px;
   height: calc(100% - 58px);
 }
 
-.input{
+.input {
   width: 100%;
 }
 
-.MuiTableContainer-root{
+.MuiTableContainer-root {
   max-height: 350px;
 }
 
-.navbar{
+.navbar {
   padding: 0 10px;
   padding-top: 10px;
 }
 
-.homeContainer{
+.homeContainer {
   margin-top: 50px;
   padding: 0 10%;
 }
 
-.homeImage{
+.homeImage {
   width: 100%;
 }
 
-.homeRigth{
+.homeRigth {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -52,6 +60,58 @@ a{
   height: 100%;
 }
 
-.homeRigth h1{
+.homeRigth h1 {
   font-size: 50px;
+}
+
+/* SIMULATION */
+
+.simulation-container {
+  padding: 20px;
+}
+
+.timer {
+  position: absolute;
+  z-index: 2;
+  width: auto;
+  height: 100px;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  overflow: hidden;
+  border-radius: 10px;
+  padding: 0 30px;
+}
+
+.timer > .blur {
+  filter: blur(50px);
+  width: 100%;
+  height: 100%;
+  background-color: #bfbfbf82;
+}
+
+.timer > div:first-child {
+  /* position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); */
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.timer > div:first-child > p {
+  margin: 0;
+  text-align: center;
+}
+
+.time-buttons {
+  display: flex;
+}
+
+.time-buttons > * {
+  cursor: pointer;
 }
