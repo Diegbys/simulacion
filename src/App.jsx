@@ -9,6 +9,7 @@ import LineVariousNoLimit from "./screens/line_various_nolimit";
 import LineVariousLimit from "./screens/line_various_limit";
 import Home from "./screens/home.js";
 import Simulation from "./screens/simulation/simulation";
+import Form from "./screens/simulation/form";
 
 function App() {
     return (
@@ -17,9 +18,16 @@ function App() {
                 <Switch>
 
                     <Route path="/simulation">
-                        <div className="simulation-container">
-                            <Simulation />
-                        </div>
+                        <Switch>
+                            <Route path="/simulation/game">
+                                <div className="simulation-container">
+                                    <Simulation />
+                                </div>
+                            </Route>
+                            <Route path="/">
+                                <Form />
+                            </Route>
+                        </Switch>
                     </Route>
 
                     <Route path="/">

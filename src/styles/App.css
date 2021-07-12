@@ -64,6 +64,23 @@ a {
   font-size: 50px;
 }
 
+/* FORM */
+.MuiFormHelperText-filled {
+  color: red !important;
+}
+
+.MuiFormLabel-filled:not(.Mui-focused) {
+  color: white !important;
+}
+
+.MuiFormControl-root {
+  width: 100%;
+}
+
+.MuiInputLabel-outlined:not(.Mui-focused) {
+  color: white !important;
+}
+
 /* SIMULATION */
 
 .simulation-container {
