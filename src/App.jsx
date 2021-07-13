@@ -19,7 +19,7 @@ function App() {
 
                     <Route path="/simulation">
                         <Switch>
-                            <Route path="/simulation/game">
+                            <Route path="/simulation/game/:data">
                                 <div className="simulation-container">
                                     <Simulation />
                                 </div>

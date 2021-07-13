@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Grid, FormControl, Select, MenuItem, InputLabel, Button, Icon } from "@material-ui/core";
+import { useHistory } from 'react-router-dom';
+
 
 export default function Form() {
     var time_format = "**:**:**";
@@ -9,7 +11,6 @@ export default function Form() {
     const [data, setData] = useState({
         lambda: time_mask,
         mu: time_mask,
-        time: time_mask,
         limit: "",
         queue: "",
         servers: "",
@@ -18,6 +19,7 @@ export default function Form() {
 
     const [errors, setErrors] = useState({});
     const [lastTarget, setLastTarget] = useState(false);
+    const history = useHistory()
 
     const setInput = (name, target) => {
         setLastTarget(target);
@@ -37,7 +39,7 @@ export default function Form() {
                 formatted += mask[i];
             }
         }
-        
+
 
         if (calcSeconds(formatted) > 24 * 60 * 60 && first) {
             formatted = "24:00:00";
@@ -50,8 +52,6 @@ export default function Form() {
     }
 
     const calcSeconds = (seconds) => {
-        console.log(seconds);
-        console.log(seconds.split(":").reverse().reduce((result, current, index) => result + current * Math.pow(60, index), 0))
         return seconds.split(":").reverse().reduce((result, current, index) => result + current * Math.pow(60, index), 0);
     }
 
@@ -62,8 +62,33 @@ export default function Form() {
     }, [data.lambda, data.limit, data.mu, data.observation]);
 
     const submit = () => {
-        const error = "El campo no puede estar vacio";
+        let error = "El campo no puede estar vacio";
+
+        let errors = ["lambda", "mu", "observation"].reduce((errors, index) => {
+            if (!time_regexp.test(data[index])) {
+                errors[index] = error;
+            } else if (calcSeconds(data[index]) <= 0 || calcSeconds(data[index]) >= 24 * 60 * 60) {
+                errors[index] = "Debe añadir una hora valida";
+            }
+            return errors;
+        }, {});
+
+        ['queue', 'servers'].forEach(e => {
+            if ((data[e] <= 0 && !data.limit) || (data[e] <=0 && data.limit)) {
+                errors[e] = "El campo no puede estar vacio ni ser negativo";
+            }
+        });
+
+        setErrors(errors);
+
+        console.log(["lambda", "mu", "observation"].map(e => data[e]).join("/") )
+        if (!Object.keys(errors).length) {
+            history.push("/simulation/game/" + data);
+
+        }
     }
+
+
 
     return (
         <div>
@@ -162,7 +187,7 @@ export default function Form() {
                 variant="contained"
                 color="primary"
                 endIcon={<Icon>send</Icon>}
-                onClick={() => console.log("hola")}
+                onClick={() => submit()}
             >
                 Comenzar Simulación
             </Button>

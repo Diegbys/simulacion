@@ -5,13 +5,14 @@ import PauseIcon from '@material-ui/icons/Pause';
 import StopIcon from '@material-ui/icons/Stop';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 
-export default function Simulation() {
+export default function Simulation(props) {
     const [seconds, setSeconds] = useState(0);
     const [velocity, setVelocity] = useState(1)
     const [pause, setPause] = useState(false);
     let timer = React.useRef(0);
 
     React.useEffect(() => {
+        console.log(props)
         setTime();
     }, [velocity]);
 
