@@ -81,10 +81,14 @@ export default function Form() {
 
         setErrors(errors);
 
-        console.log(["lambda", "mu", "observation"].map(e => data[e]).join("/") )
-        if (!Object.keys(errors).length) {
-            history.push("/simulation/game/" + data);
+        let params = [
+            ...["lambda", "mu", "observation"].map(e => calcSeconds(data[e])),
+            ...["queue", "servers"].map(e => parseInt(data[e])),
+            [data.limit]
+        ];
 
+        if (!Object.keys(errors).length) {
+            history.push("/simulation/game/" + params.join("/"));
         }
     }
 

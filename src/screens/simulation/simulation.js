@@ -4,15 +4,17 @@ import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 import PauseIcon from '@material-ui/icons/Pause';
 import StopIcon from '@material-ui/icons/Stop';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import { useParams } from 'react-router-dom';
 
 export default function Simulation(props) {
+    const params = useParams();
     const [seconds, setSeconds] = useState(0);
     const [velocity, setVelocity] = useState(1)
     const [pause, setPause] = useState(false);
     let timer = React.useRef(0);
 
     React.useEffect(() => {
-        console.log(props)
+        console.log(params.lambda);
         setTime();
     }, [velocity]);
 
