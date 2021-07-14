@@ -73,11 +73,13 @@ export default function Form() {
             return errors;
         }, {});
 
-        ['queue', 'servers'].forEach(e => {
-            if ((data[e] <= 0 && !data.limit) || (data[e] <=0 && data.limit)) {
-                errors[e] = "El campo no puede estar vacio ni ser negativo";
-            }
-        });
+        if(data.queue <= 0 && data.limit){
+            errors['queue'] = "El campo no puede ser menor a 0";
+        }
+
+        if(data.servers <= 0){
+            errors['servers'] = "Debe haber almenos 1 servidor";
+        }
 
         setErrors(errors);
 

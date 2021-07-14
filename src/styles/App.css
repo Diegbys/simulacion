@@ -84,8 +84,35 @@ a {
 /* SIMULATION */
 
 .simulation-container {
-  padding: 20px;
+  height: 100%;
+  position: relative;
+  display: flex;
 }
+
+.servers{
+  width: 20%;
+}
+
+.server{
+  width: 20px;
+  height: 70px;
+  background-color: red;
+  margin: 20px;
+}
+
+.clients{
+  width: 80%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.client{
+  width: 20px;
+  height: 20px;
+  background-color: blue;
+  margin: 20px;
+}
+
 
 .timer {
   position: absolute;

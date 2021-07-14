@@ -20,9 +20,7 @@ function App() {
                     <Route path="/simulation">
                         <Switch>
                             <Route path="/simulation/game/:lambda/:mu/:observation/:queue/:servers">
-                                <div className="simulation-container">
-                                    <Simulation />
-                                </div>
+                                <Simulation />
                             </Route>
                             <Route path="/">
                                 <Form />
