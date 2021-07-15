@@ -37,6 +37,9 @@ export default function Simulation(props) {
 
     let timer = React.useRef(0);
 
+    let serversConst = servers;
+    let secondsClient = toNewClient;
+
     React.useEffect(() => {
         setTime();
     }, [velocity]);
@@ -46,12 +49,13 @@ export default function Simulation(props) {
         setPause(false);
 
         timer.current = setInterval(() => {
-
+            console.log(toNewClient)
             if (seconds - 1 <= 0) {
                 console.log('stop');
             }
 
-            setSeconds(prev => prev - 1);
+            secondsClient = secondsClient - 1
+            setSeconds(secondsClient);
 
             if (toNewClient - 1 <= 0) {
                 addNewClient();
@@ -98,10 +102,9 @@ export default function Simulation(props) {
 
         let serversToUpdate = [];
 
-        servers.forEach(element => {
+        serversConst.forEach(element => {
             let server = {}
             server.timeClient = element.timeClient - 1;
-            console.log()
 
             if (server.timeClient < 0) {
                 server.client = '';
@@ -117,35 +120,10 @@ export default function Simulation(props) {
             serversToUpdate.push(server);
         });
 
+        setServers(serversToUpdate)
+        serversConst = serversToUpdate;
+
         console.log(serversToUpdate);
-
-        // console.log(queue.shift());
-        // let serversToUpdate = [... servers];
-
-        // serversToUpdate[0].clien = 2;
-        // serversToUpdate.forEach(e => console.log(e))
-
-        // let serversToUpdate = servers.map((ser, i) => {
-        //     console.log(servers[i].timeClient)
-
-        //     ser.timeClient = servers[i].timeClient - 1;
-
-        //     if (ser.timeClient < 0) {
-        //         ser.client = "";
-        //     }
-
-        //     if (ser.timeClient < -1 && queueToUp.length) {
-        //         ser.client = queueToUp.shift();
-        //         ser.timeClient = getRandomPoisson(params.mu);
-        //     }
-
-        //     return ser;
-        // });
-
-        // console.log(serversToUpdate);
-
-        return setServers(serversToUpdate);
-        // setQueue(queueToUp);
     }
 
 
