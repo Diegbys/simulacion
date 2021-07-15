@@ -32,7 +32,7 @@ export default function Simulation(props) {
     const [velocity, setVelocity] = useState(1)
     const [pause, setPause] = useState(false);
     const [toNewClient, setToNewClient] = useState(getRandomExponential(params.lambda));
-    const [servers, setServers] = useState(Array(parseInt(params.servers)).fill({ client: "", timeClient: 0 }))
+    const [servers, setServers] = useState(Array(parseInt(params.servers)).fill({ client: "", timeClient: -1 }))
     const [queue, setQueue] = useState([]);
 
     let timer = React.useRef(0);
@@ -54,7 +54,7 @@ export default function Simulation(props) {
             setSeconds(prev => prev - 1);
 
             if (toNewClient - 1 <= 0) {
-                // addNewClient();
+                addNewClient();
             } else {
                 setToNewClient(prev => prev - 1);
             }
@@ -77,24 +77,86 @@ export default function Simulation(props) {
     };
 
     const addNewClient = () => {
-        if((params.limit && queue.length <= params.queue) || (!params.limit)){
-            queue.push(<div className="client"></div>)
+
+        if (!params.limit) {
+            console.log('si')
+            queue.push(<div className="client"></div>);
+        } else {
+            if (queue.length < params.queue) {
+                queue.push(<div className="client"></div>);
+            } else {
+                console.log('pendiente');
+            }
         }
+
+        setToNewClient(getRandomExponential(params.lambda));
+
     }
 
     const calcServers = () => {
-        
+        let queueToUp = queue;
+
+        let serversToUpdate = [];
+
+        servers.forEach(element => {
+            let server = {}
+            server.timeClient = element.timeClient - 1;
+            console.log()
+
+            if (server.timeClient < 0) {
+                server.client = '';
+            } else {
+                server.client = element.client;
+            }
+
+            if (server.timeClient < -1 && queue.length) {
+                server.client = queueToUp.shift();
+                server.timeClient = getRandomPoisson(params.mu);
+            }
+
+            serversToUpdate.push(server);
+        });
+
+        console.log(serversToUpdate);
+
+        // console.log(queue.shift());
+        // let serversToUpdate = [... servers];
+
+        // serversToUpdate[0].clien = 2;
+        // serversToUpdate.forEach(e => console.log(e))
+
+        // let serversToUpdate = servers.map((ser, i) => {
+        //     console.log(servers[i].timeClient)
+
+        //     ser.timeClient = servers[i].timeClient - 1;
+
+        //     if (ser.timeClient < 0) {
+        //         ser.client = "";
+        //     }
+
+        //     if (ser.timeClient < -1 && queueToUp.length) {
+        //         ser.client = queueToUp.shift();
+        //         ser.timeClient = getRandomPoisson(params.mu);
+        //     }
+
+        //     return ser;
+        // });
+
+        // console.log(serversToUpdate);
+
+        return setServers(serversToUpdate);
+        // setQueue(queueToUp);
     }
 
 
     return (
         <div className="simulation-container">
             <div className="servers">
-                {servers.map((server, index) => <div key={index} className="server"><div className="client"></div></div>)}
+                {servers.map((server, index) => <div key={index} className="server">{server.client}</div>)}
             </div>
 
             <div className="clients">
-                {queue.map((client, index) => <div className="client" key={index}>{client}</div>)}
+                {queue.map((client, index) => client)}
             </div>
 
             <div className="timer">

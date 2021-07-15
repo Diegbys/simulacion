@@ -19,7 +19,7 @@ function App() {
 
                     <Route path="/simulation">
                         <Switch>
-                            <Route path="/simulation/game/:lambda/:mu/:observation/:queue/:servers">
+                            <Route path="/simulation/game/:lambda/:mu/:observation/:queue/:servers/:limit">
                                 <Simulation />
                             </Route>
                             <Route path="/">
