@@ -49,17 +49,17 @@ export default function Simulation(props) {
         setPause(false);
 
         timer.current = setInterval(() => {
-            console.log(toNewClient)
+            console.log(secondsClient)
             if (seconds - 1 <= 0) {
                 console.log('stop');
             }
 
-            secondsClient = secondsClient - 1
-            setSeconds(secondsClient);
+            setSeconds(prev => prev - 1);
 
-            if (toNewClient - 1 <= 0) {
+            if (secondsClient - 1 <= 0) {
                 addNewClient();
             } else {
+                secondsClient -= 1
                 setToNewClient(prev => prev - 1);
             }
 
@@ -93,7 +93,9 @@ export default function Simulation(props) {
             }
         }
 
-        setToNewClient(getRandomExponential(params.lambda));
+        let newSecond = getRandomExponential(params.lambda)
+        setToNewClient(newSecond);
+        secondsClient = newSecond;
 
     }
 
