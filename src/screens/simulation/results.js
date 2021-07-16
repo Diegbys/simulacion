@@ -20,11 +20,14 @@ function formatNumber(number, precission) {
 
 export default function Results() {
     const params = useParams();
+
     var impossible = "Error al ejecutar los calculos";
     var limit = params.queue + params.servers;
+    const lambda = 3600 / params.lambda;
+    const mu = 3600 / params.mu;
 
     const r = () => {
-        return params.lambda / params.mu;
+        return lambda / mu;
     }
 
     const p0 = () => {
@@ -61,7 +64,7 @@ export default function Results() {
     }
 
     const usage = () => {
-        return params.lambda / (params.servers * params.mu);
+        return lambda / (params.servers * mu);
     }
 
     const averageQueueSize = () => {
@@ -89,10 +92,10 @@ export default function Results() {
         }
 
         if (params.limit === 'false') {
-            return averageQueueSize() / params.lambda;
+            return averageQueueSize() / lambda;
         }
 
-        return averageSystemSize() / (params.lambda * (1 - pn(limit))) - (1 / params.mu);
+        return averageSystemSize() / (lambda * (1 - pn(limit))) - (1 / mu);
     }
 
     const averageSystemTime = () => {
@@ -100,7 +103,7 @@ export default function Results() {
             return impossible;
         }
 
-        return averageQueueTime() + (1 / params.mu);
+        return averageQueueTime() + (1 / mu);
     }
 
     const averageSystemSize = () => {

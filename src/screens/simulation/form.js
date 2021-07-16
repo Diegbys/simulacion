@@ -12,7 +12,7 @@ export default function Form() {
         lambda: time_mask,
         mu: time_mask,
         limit: "",
-        queue: "",
+        queue: 0,
         servers: "",
         observation: time_mask
     });

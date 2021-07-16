@@ -7,6 +7,8 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { useParams, useHistory } from 'react-router-dom';
 
 import calcTime from './../../components/calcTime';
+import Client from './../../components/client';
+import Cajero from './../../assets/cajero.png';
 
 function getRandomExponential(rate) {
     return parseInt(-Math.log(Math.random()) * rate);
@@ -40,6 +42,7 @@ export default function Simulation(props) {
 
     let serversConst = servers;
     let secondsClient = toNewClient;
+    let sec = seconds;
 
     React.useEffect(() => {
         setTime();
@@ -51,11 +54,14 @@ export default function Simulation(props) {
 
         timer.current = setInterval(() => {
             console.log(secondsClient)
-            if (seconds - 1 <= 0) {
+            console.log( sec + ' ' + (sec - 1 <= 0))
+
+            if (sec - 1 <= 0) {
                 stopSimulation();
             }
 
             setSeconds(prev => prev - 1);
+            sec -= 1
 
             if (secondsClient - 1 <= 0) {
                 addNewClient();
@@ -82,12 +88,23 @@ export default function Simulation(props) {
     };
 
     const addNewClient = () => {
+        let colors = ['#00a8ff', '#9c88ff', '#fbc531', '#4cd137', '#487eb0', '#e84118', '#f5f6fa', '#273c75', '#353b48'];
+        let skins = ['#fdddca', '#a18d82', '#685c55', '#4e4540']
+        let client = <Client
+            shirt1={`rgb(${parseInt(Math.random() * 256)}, ${parseInt(Math.random() * 256)}, ${parseInt(Math.random() * 256)})`}
+            shirt2={`rgb(${parseInt(Math.random() * 256)}, ${parseInt(Math.random() * 256)}, ${parseInt(Math.random() * 256)})`}
+            shoes={colors[parseInt(Math.random() * colors.length)]}
+            skin={skins[parseInt(Math.random() * skins.length)]}
+            hair={colors[parseInt(Math.random() * colors.length)]}
+            jeans={colors[parseInt(Math.random() * colors.length)]}
+        />
+
+
         if (params.limit === 'false') {
-            console.log('si')
-            queue.push(<div className="client"></div>);
+            queue.push(<div className="client">{client}</div>);
         } else {
             if (queue.length < params.queue) {
-                queue.push(<div className="client"></div>);
+                queue.push(<div className="client">{client}</div>);
             } else {
                 console.log('pendiente');
             }
@@ -128,7 +145,7 @@ export default function Simulation(props) {
         console.log(serversToUpdate);
     }
 
-    const stopSimulation = () =>{
+    const stopSimulation = () => {
         clearInterval(timer.current);
         history.push(`/simulation/results/${params.lambda}/${params.mu}/${params.observation}/${params.queue}/${params.servers}/${params.limit}`);
 
@@ -137,7 +154,14 @@ export default function Simulation(props) {
     return (
         <div className="simulation-container">
             <div className="servers">
-                {servers.map((server, index) => <div key={index} className="server">{server.client}</div>)}
+                {servers.map((server, index) => {
+                    return (
+                        <div key={index} className="server">
+                            <img className='cajero' src={Cajero} alt="logo" width="500" height="600" />
+                            {server.client}
+                        </div>
+                    );
+                })}
             </div>
 
             <div className="clients">
@@ -150,7 +174,7 @@ export default function Simulation(props) {
                     <div className="time-buttons">
                         <SkipPreviousIcon onClick={() => velocity > 1 && setVelocity(prev => prev / 2)} />
                         {!pause ? <PauseIcon onClick={() => pause_or_start()} /> : <PlayArrowIcon onClick={() => pause_or_start()} />}
-                        <StopIcon onClick={() => stopSimulation()}/>
+                        <StopIcon onClick={() => stopSimulation()} />
                         <SkipNextIcon onClick={() => velocity < 32 && setVelocity(prev => prev * 2)} />
                     </div>
                     <p>x{velocity}</p>
