@@ -19,7 +19,7 @@ export default function Form() {
 
     const [errors, setErrors] = useState({});
     const [lastTarget, setLastTarget] = useState(false);
-    const history = useHistory()
+    const history = useHistory();
 
     const setInput = (name, target) => {
         setLastTarget(target);

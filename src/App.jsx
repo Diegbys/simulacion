@@ -9,6 +9,7 @@ import LineVariousNoLimit from "./screens/line_various_nolimit";
 import LineVariousLimit from "./screens/line_various_limit";
 import Home from "./screens/home.js";
 import Simulation from "./screens/simulation/simulation";
+import Results from "./screens/simulation/results";
 import Form from "./screens/simulation/form";
 
 function App() {
@@ -21,6 +22,9 @@ function App() {
                         <Switch>
                             <Route path="/simulation/game/:lambda/:mu/:observation/:queue/:servers/:limit">
                                 <Simulation />
+                            </Route>
+                            <Route path="/simulation/results/:lambda/:mu/:observation/:queue/:servers/:limit">
+                                <Results />
                             </Route>
                             <Route path="/">
                                 <Form />

@@ -4,7 +4,7 @@ import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 import PauseIcon from '@material-ui/icons/Pause';
 import StopIcon from '@material-ui/icons/Stop';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import calcTime from './../../components/calcTime';
 
@@ -34,6 +34,7 @@ export default function Simulation(props) {
     const [toNewClient, setToNewClient] = useState(getRandomExponential(params.lambda));
     const [servers, setServers] = useState(Array(parseInt(params.servers)).fill({ client: "", timeClient: -1 }))
     const [queue, setQueue] = useState([]);
+    const history = useHistory()
 
     let timer = React.useRef(0);
 
@@ -51,7 +52,7 @@ export default function Simulation(props) {
         timer.current = setInterval(() => {
             console.log(secondsClient)
             if (seconds - 1 <= 0) {
-                console.log('stop');
+                stopSimulation();
             }
 
             setSeconds(prev => prev - 1);
@@ -81,8 +82,7 @@ export default function Simulation(props) {
     };
 
     const addNewClient = () => {
-
-        if (!params.limit) {
+        if (params.limit === 'false') {
             console.log('si')
             queue.push(<div className="client"></div>);
         } else {
@@ -128,6 +128,11 @@ export default function Simulation(props) {
         console.log(serversToUpdate);
     }
 
+    const stopSimulation = () =>{
+        clearInterval(timer.current);
+        history.push(`/simulation/results/${params.lambda}/${params.mu}/${params.observation}/${params.queue}/${params.servers}/${params.limit}`);
+
+    }
 
     return (
         <div className="simulation-container">
@@ -145,7 +150,7 @@ export default function Simulation(props) {
                     <div className="time-buttons">
                         <SkipPreviousIcon onClick={() => velocity > 1 && setVelocity(prev => prev / 2)} />
                         {!pause ? <PauseIcon onClick={() => pause_or_start()} /> : <PlayArrowIcon onClick={() => pause_or_start()} />}
-                        <StopIcon />
+                        <StopIcon onClick={() => stopSimulation()}/>
                         <SkipNextIcon onClick={() => velocity < 32 && setVelocity(prev => prev * 2)} />
                     </div>
                     <p>x{velocity}</p>
