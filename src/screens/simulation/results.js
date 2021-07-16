@@ -2,146 +2,211 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { TextField, Grid, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@material-ui/core";
 import calcTime from './../../components/calcTime';
-
-function factorial(n) {
-    if (n <= 1) {
-        return 1;
-    }
-    return n * factorial(n - 1);
-}
+import fact from "../../components/fact";
 
 function probabilityToPercentage(probability, precission) {
     return `${Math.round(probability * Math.pow(10, precission)) / Math.pow(10, precission)}%`;
 }
 
-function formatNumber(number, precission) {
-    return Math.round(number * Math.pow(10, precission)) / Math.pow(10, precission);
-}
 
 export default function Results() {
     const params = useParams();
-
-    var impossible = "Error al ejecutar los calculos";
-    var limit = params.queue + params.servers;
     const lambda = 3600 / params.lambda;
     const mu = 3600 / params.mu;
 
-    const r = () => {
-        return lambda / mu;
-    }
-
-    const p0 = () => {
-        if (usage() > 1 && params.limit === 'false') {
-            return 0;
-        }
-
-        let inner;
-        if (params.limit === 'false') {
-            inner = (total, a, n) => total + Math.pow(r(), n) / factorial(n) + (Math.pow(r(), params.servers) / (factorial(params.servers) * (1 - usage())));
-        } else if (usage() !== 1) {
-            inner = (total, a, n) => total + Math.pow(r(), n) / factorial(n) + (Math.pow(r(), params.servers) * (1 - Math.pow(usage(), limit - params.servers + 1))) / (factorial(params.servers) * (1 - usage()));
-        } else {
-            inner = (total, a, n) => total + Math.pow(r(), n) / factorial(n) + (Math.pow(r(), params.servers) * (limit - params.servers + 1)) / factorial(params.servers);
-        }
-
-        return Math.pow(Array(params.servers).fill(0).reduce(inner, 0), -1);
-    }
-
-    const pn = (n) => {
-        if (n === 0) {
-            return p0();
-        }
-
-        if (n >= 1 && n < params.servers) {
-            return (Math.pow(r(), n) * p0()) / factorial(n);
-        }
-
-        if (params.limit === 'false' || n <= limit) {
-            return (Math.pow(r(), n) * p0()) / (Math.pow(params.servers, n - params.servers) * factorial(params.servers));
-        }
-
-        return 0;
-    }
+    const [table, setTable] = React.useState([]);
+    const [result, setResults] = React.useState({
+        ls: 0,
+        lq: 0,
+        ws: 0,
+        wq: 0,
+    });
 
     const usage = () => {
-        return lambda / (params.servers * mu);
+        return lambda / (parseInt(params.servers) * mu);
     }
 
-    const averageQueueSize = () => {
-        if (!p0()) {
-            return impossible;
-        }
+    const calculate_line_one_limit = (tablex) => {
+        let ro = (parseFloat(lambda) / parseFloat(mu)).toFixed(4);
+        let pRo = ro;
+        let pN = parseFloat(params.queue) + 1;
+        let lsUp = pRo * (1 - (pN + 1) * pRo ** pN + pN * pRo ** (pN + 1));
+        let lsDown = (1 - pRo) * (1 - pRo ** (pN + 1))
 
-        let usagex = usage();
-        if (usage() === 1 && params.limit === 'true') {
-            usagex -= 0.0001;
-        }
+        let ls = lsUp / lsDown;
+        let lampdaEfec = parseFloat(lambda) * (1 - parseFloat(tablex[tablex.length - 1].pn));
+        let lq = ls - lampdaEfec / parseFloat(mu);
+        let lampdaPer = parseFloat(lambda) - lampdaEfec;
+        let wq = lq / lampdaEfec;
+        let ws = wq + (1 / parseFloat(mu));
 
-        let calc = (Math.pow(r(), params.servers) * usagex * p0()) / (factorial(params.servers) * Math.pow(1 - usagex, 2));
 
-        if (params.limit === 'false') {
-            return calc;
-        }
+        setResults({
+            ls: ls.toFixed(4),
+            lq: lq.toFixed(4),
+            ws: ws.toFixed(4),
+            wq: wq.toFixed(4),
+        });
 
-        return (calc * (1 - Math.pow(usage(), limit - params.servers) - (1 - usage()) * (limit - params.servers) * Math.pow(usage(), limit - params.servers)));
     }
 
-    const averageQueueTime = () => {
-        if (!p0()) {
-            return impossible;
-        }
+    const calculateLines_line_one_limit = () => {
+        let ro = (parseFloat(lambda) / parseFloat(mu)).toFixed(4);
+        let lines = [];
+        let pn0 = (1 - ro) / (1 - ro ** ((parseFloat(params.queue) + 1) + 1))
+        let pnAcum = 0;
 
-        if (params.limit === 'false') {
-            return averageQueueSize() / lambda;
-        }
+        for (let index = 0; index <= parseFloat(params.queue) + 1; index++) {
+            let pn = index === 0 ? pn0 : pn0 * ro ** index;
+            pnAcum += pn;
 
-        return averageSystemSize() / (lambda * (1 - pn(limit))) - (1 / mu);
+            lines.push({
+                n: index,
+                pn: pn.toFixed(4),
+                pnAcum: pnAcum.toFixed(4),
+                nxpn: (pn * index).toFixed(4)
+            });
+        }
+        setTable(lines, calculate_line_one_limit(lines))
+        return
     }
 
-    const averageSystemTime = () => {
-        if (!p0()) {
-            return impossible;
-        }
+    const calculate_line_one_no_limit = () => {
+        let ro = (parseFloat(lambda) / parseFloat(mu)).toFixed(4);
 
-        return averageQueueTime() + (1 / mu);
+        let ls = ro / (1 - ro);
+        let lq = ls - ro;
+        let ws = ls / parseFloat(lambda);
+        let wq = lq / parseFloat(lambda);
+        setResults({
+            ls: ls.toFixed(4),
+            lq: lq.toFixed(4),
+            ws: ws.toFixed(4),
+            wq: wq.toFixed(4)
+        });
+        calculateLines_one_no_limit();
+
     }
 
-    const averageSystemSize = () => {
-        if (!p0()) {
-            return impossible;
-        }
+    const calculateLines_one_no_limit = () => {
+        let ro = (parseFloat(lambda) / parseFloat(mu)).toFixed(4);
 
-        if (params.limit === 'false') {
-            return r() + averageQueueSize();
-        }
+        let lines = [];
+        let continues = true;
+        let pn0 = 1 - ro;
+        let pnAcum = 0;
+        for (let index = 0; continues; index++) {
+            let pn = index === 0 ? pn0 : pn0 * ro ** index;
+            pnAcum += pn;
 
-        return averageQueueSize() + r() * (1 - pn(limit));
+            lines.push({
+                n: index,
+                pn: pn.toFixed(4),
+                pnAcum: pnAcum.toFixed(4),
+                nxpn: (pn * index).toFixed(4)
+            });
+            if (pn < 0.0001) {
+                continues = false;
+            }
+        }
+        setTable(lines)
     }
 
-    let x = 0, probabilities = [];
-    let px = pn(x), pxi = pn(x);
 
-    while (pxi >= 0 && (px === -1 || px >= 0.0001) && (params.limit === 'false' || x <= limit)) {
-        probabilities.push({ n: x, pn: probabilityToPercentage(px * 100, 2), pnAcum: 0, nxpn: probabilityToPercentage(pxi * 100, 2) });
+    const calculate_line_various_limit = () => {
+        let c = parseFloat(params.servers);
+        let n = parseFloat(params.queue) + parseFloat(params.servers);
+        let p = parseFloat(lambda) / parseFloat(mu);
+        let p_c = p / parseFloat(params.servers);
+        let po = p_c === 1 ? po = 1 / calcSumatory(p) + (p ** c / fact(c)) * (n - c + 1) : 1 / (calcSumatory(p) + (p ** c * ((1 - p_c ** (n - c + 1)) / (fact(c) * (1 - p_c)))));
+        let lq = 0;
+        if (p_c === 1) {
+            lq = po * ((p ** c * (c - n) * (n - c + 1)) / (fact(2 * c)));
+        } else {
+            lq = (po * ((p ** (c + 1)) / (fact(c - 1) * (c - p) ** 2))) * (1 - p_c ** (n - c) - ((n - c) * p_c ** (n - c) * (1 - p_c)));
+        }
+        let č = calculateLines_various_limit(po, p, c);
+        let ls = lq + (c - č);
 
-
-        x++;
-        px = pn(x);
-        pxi += px;
+        setResults({
+            lq: lq.toFixed(4),
+            ls: ls.toFixed(4),
+            ws: (ls / parseFloat(lambda)).toFixed(4),
+            wq: (lq / parseFloat(lambda)).toFixed(4),
+        })
     }
 
-    const queue_time = averageQueueTime();
-    const system_time = averageSystemTime();
+    const calcSumatory = (p) => {
+        let sumatory = [];
+        for (let i = 0; i <= 20; i++) {
+            sumatory.push(i >= parseFloat(params.servers) ? 0 : (p ** i) / (fact(i)));
+        }
+        return sumatory.reduce((a, b) => a + b, 0);
+    }
+
+
+    const calculateLines_various_limit = (po, p, c) => {
+
+        let lines = [];
+        let continues = true;
+        let pnAcum = 0;
+        for (let index = 0; index <= (parseFloat(params.queue) + parseFloat(params.servers)); index++) {
+            let pn = 0;
+            if (index === 0) {
+                pn = po.toFixed(4);
+            } else {
+                pn = (index < c ? p ** index / fact(index) * po : p ** index / (fact(c) * c ** (index - c)) * po).toFixed(4);
+            }
+            pnAcum = parseFloat(pnAcum) + parseFloat(pn);
+
+            lines.push({ n: index, pn: pn, pnAcum: pnAcum.toFixed(4) });
+            if (pn < 0.0001) {
+                continues = false;
+            }
+        }
+        setTable(lines);
+        return calcC(c, lines);
+    }
+
+    const calcC = (c, lines) => {
+        let sum = [];
+        for (let i = 0; i <= 20; i++) {
+            sum.push(i >= c ? 0 : (c - i) * lines[i].pn);
+        }
+        return sum.reduce((a, b) => a + b, 0);
+    }
+
+    React.useEffect(() => {
+        if (params.servers == 1 && params.queue != 0) {
+            calculateLines_line_one_limit();
+        }
+
+        if (params.servers == 1 && params.queue == 0) {
+
+            calculate_line_one_no_limit();
+        }
+
+        if (params.servers > 1 && params.queue != 0) {
+            calculate_line_various_limit();
+        }
+
+
+    }, [])
+
 
     return (
         <div>
-            <p>Factor de utilización del sistema: {probabilityToPercentage(usage() * 100, 2)}</p>
-            <p>Tiempo promedio en cola: {isNaN(queue_time) ? queue_time : `${formatNumber(queue_time, 3)} horas (${calcTime(queue_time * 3600)})`}</p>
+            {/* <p>Factor de utilización del sistema: {lambda}</p>
+            <p>Tiempo promedio en cola: {}</p>
             <p>Tiempo promedio en el sistema: {isNaN(system_time) ? system_time : `${formatNumber(system_time, 3)} horas (${calcTime(system_time * 3600)})`}</p>
             <p>Cantidad promedio de clientes en la cola: {Math.round(averageQueueSize())}</p>
-            <p>Cantidad promedio de clientes en el sistema: {Math.round(averageSystemSize())}</p>
+            <p>Cantidad promedio de clientes en el sistema: {Math.round(averageSystemSize())}</p> */}
 
-
+            <p>Factor de utilización del sistema: {probabilityToPercentage(usage() * 100, 2)}</p>
+            <p>Tiempo promedio en cola: {result.wq}</p>
+            <p>Tiempo promedio en el sistema: {result.ws}</p>
+            <p>Cantidad promedio de clientes en la cola: {result.lq}</p>
+            <p>Cantidad promedio de clientes en el sistema: {result.ls}</p>
 
 
             <TableContainer component={Paper}>
@@ -155,7 +220,7 @@ export default function Results() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {probabilities.map((row, index) => (
+                        {table.map((row, index) => (
                             <TableRow key={index}>
                                 <TableCell component="th" scope="row">{row.n}</TableCell>
                                 <TableCell align="right">{row.pn}</TableCell>
