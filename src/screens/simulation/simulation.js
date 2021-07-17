@@ -5,6 +5,10 @@ import PauseIcon from '@material-ui/icons/Pause';
 import StopIcon from '@material-ui/icons/Stop';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { useParams, useHistory } from 'react-router-dom';
+import { IconButton } from "@material-ui/core";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
+
 
 import calcTime from './../../components/calcTime';
 import Client from './../../components/client';
@@ -182,6 +186,9 @@ export default function Simulation(props) {
                 <div className="blur"></div>
             </div>
 
+            <IconButton aria-label="Salir" className="ExitButton" onClick={() => history.push("/")}>
+                <ExitToAppIcon />
+            </IconButton>
         </div>
     );
 }

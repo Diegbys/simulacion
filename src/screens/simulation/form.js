@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { TextField, Grid, FormControl, Select, MenuItem, InputLabel, Button, Icon } from "@material-ui/core";
+import { TextField, Grid, FormControl, Select, MenuItem, InputLabel, Button, Icon, IconButton } from "@material-ui/core";
 import { useHistory } from 'react-router-dom';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 
 export default function Form() {
@@ -73,11 +74,11 @@ export default function Form() {
             return errors;
         }, {});
 
-        if(data.queue <= 0 && data.limit){
+        if (data.queue <= 0 && data.limit) {
             errors['queue'] = "El campo no puede ser menor a 0";
         }
 
-        if(data.servers <= 0){
+        if (data.servers <= 0) {
             errors['servers'] = "Debe haber almenos 1 servidor";
         }
 
@@ -97,7 +98,7 @@ export default function Form() {
 
 
     return (
-        <div>
+        <div className="formContainer">
             <h2>Simulación de cajeros</h2>
             <h5>Ingrese los datos</h5>
             <Grid container spacing={2}>
@@ -194,9 +195,16 @@ export default function Form() {
                 color="primary"
                 endIcon={<Icon>send</Icon>}
                 onClick={() => submit()}
+                className="buttonForm"
+
             >
                 Comenzar Simulación
             </Button>
+
+            <IconButton aria-label="Salir" className="ExitButton" onClick={() => history.push("/")}>
+                <ExitToAppIcon />
+            </IconButton>
+
         </div>
     );
 }

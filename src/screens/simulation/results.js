@@ -1,8 +1,11 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { TextField, Grid, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@material-ui/core";
+import { TextField, Grid, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from "@material-ui/core";
 import calcTime from './../../components/calcTime';
 import fact from "../../components/fact";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { useHistory } from 'react-router-dom';
+
 
 function probabilityToPercentage(probability, precission) {
     return `${Math.round(probability * Math.pow(10, precission)) / Math.pow(10, precission)}%`;
@@ -13,6 +16,7 @@ export default function Results() {
     const params = useParams();
     const lambda = 3600 / params.lambda;
     const mu = 3600 / params.mu;
+    const history = useHistory();
 
     const [table, setTable] = React.useState([]);
     const [result, setResults] = React.useState({
@@ -176,6 +180,53 @@ export default function Results() {
         return sum.reduce((a, b) => a + b, 0);
     }
 
+    const calculate_line_various_no_limit = () => {
+
+        let p = parseFloat(lambda) / parseFloat(mu);
+        let p_c = p / parseFloat(params.servers);
+        let po = 1 / (calcSumatory(p) + (p ** parseFloat(params.servers) / (fact(parseFloat(params.servers)) * (1 - p_c))));
+        let lq = p ** (parseFloat(params.servers) + 1) / (fact(parseFloat(params.servers) - 1) * (parseFloat(params.servers) - p) ** 2) * po;
+        let ls = lq + p;
+
+        setResults({
+            p: p.toFixed(4),
+            p_c: p_c.toFixed(4),
+            po: po.toFixed(4),
+            lq: lq.toFixed(4),
+            ls: ls.toFixed(4),
+            ws: (ls / parseFloat(lambda)).toFixed(4),
+            wq: (lq / parseFloat(lambda)).toFixed(4)
+        }, calculateLines_various_no_limit(p, po))
+    }
+
+
+    const calculateLines_various_no_limit = (p, po) => {
+        let lines = [];
+        let continues = true;
+        let pnAcum = 0;
+        for (let index = 0; continues; index++) {
+            let pn = 0;
+            if (index === 0) {
+                pn = po;
+            } else {
+                if (index < parseFloat(params.servers)) {
+                    pn = (p ** index / fact(index) * po).toFixed(4);
+                } else {
+                    pn = (p ** index / (fact(parseFloat(params.servers)) * parseFloat(params.servers) ** (index - parseFloat(params.servers))) * po).toFixed(4);
+                }
+            }
+            console.log('aras')
+            pnAcum = parseFloat(pnAcum) + parseFloat(pn);
+
+            lines.push({ n: index, pn: pn, pnAcum: pnAcum.toFixed(4) });
+            if (pn < 0.0001) {
+                continues = false;
+            }
+        }
+        setTable(lines)
+    }
+
+
     React.useEffect(() => {
         if (params.servers == 1 && params.queue != 0) {
             calculateLines_line_one_limit();
@@ -190,47 +241,55 @@ export default function Results() {
             calculate_line_various_limit();
         }
 
+        if (params.servers > 1 && params.queue == 0) {
+            console.log("siosi");
+            calculate_line_various_no_limit();
+        }
+
 
     }, [])
 
 
     return (
-        <div>
-            {/* <p>Factor de utilización del sistema: {lambda}</p>
-            <p>Tiempo promedio en cola: {}</p>
-            <p>Tiempo promedio en el sistema: {isNaN(system_time) ? system_time : `${formatNumber(system_time, 3)} horas (${calcTime(system_time * 3600)})`}</p>
-            <p>Cantidad promedio de clientes en la cola: {Math.round(averageQueueSize())}</p>
-            <p>Cantidad promedio de clientes en el sistema: {Math.round(averageSystemSize())}</p> */}
+        <div className="resultContainer">
+            <div>
+                <h1>Resultados</h1>
+                <div className="resultsData">
+                    <div>
+                        <p>Factor de utilización del sistema: {probabilityToPercentage(usage() * 100, 2)}</p>
+                        <p>Tiempo promedio en cola: {result.wq}</p>
+                        <p>Tiempo promedio en el sistema: {result.ws}</p>
+                        <p>Cantidad promedio de clientes en la cola: {result.lq}</p>
+                        <p>Cantidad promedio de clientes en el sistema: {result.ls}</p>
+                    </div>
 
-            <p>Factor de utilización del sistema: {probabilityToPercentage(usage() * 100, 2)}</p>
-            <p>Tiempo promedio en cola: {result.wq}</p>
-            <p>Tiempo promedio en el sistema: {result.ws}</p>
-            <p>Cantidad promedio de clientes en la cola: {result.lq}</p>
-            <p>Cantidad promedio de clientes en el sistema: {result.ls}</p>
-
-
-            <TableContainer component={Paper}>
-                <Table aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>N</TableCell>
-                            <TableCell align="right">Pn</TableCell>
-                            <TableCell align="right">PnAcum</TableCell>
-                            <TableCell align="right">N*P</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {table.map((row, index) => (
-                            <TableRow key={index}>
-                                <TableCell component="th" scope="row">{row.n}</TableCell>
-                                <TableCell align="right">{row.pn}</TableCell>
-                                <TableCell align="right">{row.pnAcum}</TableCell>
-                                <TableCell align="right">{row.nxpn}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                    <TableContainer component={Paper}>
+                        <Table aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>N</TableCell>
+                                    <TableCell align="right">Pn</TableCell>
+                                    <TableCell align="right">PnAcum</TableCell>
+                                    <TableCell align="right">N*P</TableCell>.
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {table.map((row, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell component="th" scope="row">{row.n}</TableCell>
+                                        <TableCell align="right">{row.pn}</TableCell>
+                                        <TableCell align="right">{row.pnAcum}</TableCell>
+                                        <TableCell align="right">{row.nxpn}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </div>
+            </div>
+            <IconButton aria-label="Salir" className="ExitButton" onClick={() => history.push("/")}>
+                <ExitToAppIcon />
+            </IconButton>
         </div>
     );
 }
