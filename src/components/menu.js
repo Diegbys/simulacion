@@ -17,6 +17,7 @@ import LinearScaleOutlinedIcon from '@material-ui/icons/LinearScaleOutlined';
 import MultilineChartOutlinedIcon from '@material-ui/icons/MultilineChartOutlined';
 import TimerRoundedIcon from '@material-ui/icons/TimerRounded';
 import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
+import AtmIcon from '@material-ui/icons/Atm';
 
 export default function MenuAp() {
     const [sidebar, setSidebar] = React.useState(false);
@@ -82,7 +83,7 @@ export default function MenuAp() {
                 <ListItem>Simulación</ListItem>
                 <Link to ="/simulation">
                     <ListItem button>
-                        <ListItemIcon><MultilineChartOutlinedIcon /></ListItemIcon>
+                        <ListItemIcon><AtmIcon /></ListItemIcon>
                         <ListItemText primary="Cajeros" />
                     </ListItem>
                 </Link>
